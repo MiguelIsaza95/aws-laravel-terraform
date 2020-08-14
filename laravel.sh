@@ -1,10 +1,15 @@
 #!/bin/bash
 
 # Install Laravel
-suo yum -y update
-sudo yum -y install php-cli php-zip wget unzip mysql-server
-sudo service mysqld start
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+sudo yum -y update
+sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-12.noarch.rpm
+sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+sudo yum -y --enablerepo=remi,epel install httpd
+sudo yum -y --enablerepo=remi,epel install mysql
+sudo yum -y --enablerepo=remi,epel install php php-zip php-mysql php-mcrypt php-xml php-mbstring git
+curl -sS https://getcomposer.org/installer | php
+sudo chmod 777 /usr/local/bin
 php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
 
