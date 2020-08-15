@@ -63,4 +63,3 @@ sudo php artisan key:generate
 # Restart services
 sudo systemctl restart nginx
 sudo systemctl restart php-fpm
-
