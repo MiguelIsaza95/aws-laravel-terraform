@@ -31,7 +31,7 @@ sudo ln -s /usr/local/bin/composer /usr/bin/composer
 # composer install
 cd /usr/share/nginx/html
 sudo composer create-project --prefer-dist laravel/laravel quickstart
-wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
+sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
 sudo mv nginx.conf /etc/nginx/nginx.conf
 
 sudo nginx -t
@@ -46,15 +46,15 @@ sudo chown -R apache.apache /usr/share/nginx/html/quickstart/
 sudo chmod -R 777 /usr/share/nginx/html/quickstart/storage/*
 sudo chown -R apache.apache /usr/share/nginx/html/testapp/bootstrap/cache
 
-sudo semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/testapp/bootstrap/cache(/.*)?'
-sudo semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/testapp/storage(/.*)?'
+sudo semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/quickstart/bootstrap/cache(/.*)?'
+sudo semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/quickstart/storage(/.*)?'
 
-sudo restorecon -Rv '/usr/share/nginx/html/testapp'
+sudo restorecon -Rv '/usr/share/nginx/html/quickstart'
 
 # Configure Laravel Installation
-wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
+sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
 sudo mv .env /usr/share/nginx/html/quickstart/.env
-cd /quickstart
+cd quickstart/
 sudo php artisan key:generate
 
 # Database migration
