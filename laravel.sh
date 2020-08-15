@@ -25,11 +25,9 @@ ln -s /usr/local/bin/composer /usr/bin/composer
 
 # composer install
 cd /usr/share/nginx/html
-composer create-project --prefer-dist laravel/laravel quickstart
+git clone https://github.com/laravel/quickstart-basic quickstart
 wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
 mv nginx.conf /etc/nginx/nginx.conf
-
-nginx -t
 
 systemctl restart nginx
 
@@ -50,6 +48,7 @@ restorecon -Rv '/usr/share/nginx/html/quickstart'
 wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
 mv .env /usr/share/nginx/html/quickstart/.env
 cd quickstart/
+composer install
 php artisan key:generate
 
 # Database migration
