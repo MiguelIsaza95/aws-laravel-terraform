@@ -56,9 +56,9 @@ php artisan key:generate
 yum -y install mariadb-server php71w-mysql
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
-php artisan make:auth
-php artisan session:table
-php artisan migrate
+#php artisan make:auth
+#php artisan session:table
+#php artisan migrate
 
 # Restart services
 systemctl restart nginx
