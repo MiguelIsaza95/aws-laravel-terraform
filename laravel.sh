@@ -4,6 +4,7 @@
 
 # Install PHP and Nginx
 
+##db.laravelserv.tk
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
@@ -58,7 +59,10 @@ cd quickstart/
 sudo php artisan key:generate
 
 # Database migration
-#sudo php artisan migrate
+sudo yum -y install mariadb-server php71w-mysql
+sudo php artisan make:auth
+php artisan session:table
+sudo php artisan migrate
 
 # Restart services
 sudo systemctl restart nginx
