@@ -37,7 +37,7 @@ resource "aws_launch_template" "laravel" {
   monitoring {
     enabled = true
   }
-  name_prefix            = "laravel_server_config"
+  name_prefix            = "laravel"
   image_id               = var.ami
   instance_type          = var.instance_type
   key_name               = var.key_name
@@ -58,7 +58,7 @@ resource "aws_launch_template" "laravel" {
 resource "aws_db_instance" "mysql_server" {
   engine                = var.engine
   engine_version        = var.engine_version
-  identifier            = "laraveldb"
+  identifier            = "laravelaws"
   username              = var.db_username
   password              = var.db_password
   instance_class        = var.db_instance_type

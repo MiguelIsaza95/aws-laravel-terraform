@@ -21,7 +21,7 @@ aws_key_pair  = "/home/developer/Documents/cloud-ssh-keys/linux_key.pem"
 
 # DB configuraiton vars
 db_instance_type = "db.t2.micro"
-db_username      = "laravel"
+db_username      = "laravelaws"
 db_password      = "password"
 engine           = "mysql"
 engine_version   = "8.0"
