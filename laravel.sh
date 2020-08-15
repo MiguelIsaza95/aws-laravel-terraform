@@ -30,7 +30,7 @@ sudo ln -s /usr/local/bin/composer /usr/bin/composer
 
 # composer install
 cd /usr/share/nginx/html
-sudo composer create-project --prefer-distro laravel/laravel quickstart
+sudo composer create-project --prefer-dist laravel/laravel quickstart
 wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
 sudo mv nginx.conf /etc/nginx/nginx.conf
 
