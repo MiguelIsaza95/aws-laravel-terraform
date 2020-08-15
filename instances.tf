@@ -58,7 +58,7 @@ resource "aws_launch_template" "laravel" {
 resource "aws_db_instance" "mysql_server" {
   engine                = var.engine
   engine_version        = var.engine_version
-  identifier            = "moviedb"
+  identifier            = "laraveldb"
   username              = var.db_username
   password              = var.db_password
   instance_class        = var.db_instance_type

@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "primary" {
-  name = "movieanalyst.tk"
+  name = "laravelserv.tk"
 }
 
 resource "aws_route53_record" "www" {
