@@ -1,23 +1,16 @@
 #!/bin/bash
 
-# Install Laravel
-sudo yum -y update
-sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-12.noarch.rpm
-sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+# Laravel Intallation process
 
-sudo yum -y --enablerepo=remi,epel install httpd
-sudo yum -y --enablerepo=remi,epel install mysql
-sudo yum -y --enablerepo=remi,epel install php php-zip php-mysql php-mcrypt php-xml php-mbstring git
-curl -sS https://getcomposer.org/installer | php
-sudo chmod 777 /usr/local/bin
-php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+# Install PHP and Nginx
 
+sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-composer
+sudo yum -y install wget git nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli
 
-composer create-project laravel/laravel quickstart --prefer-dist
-git clone https://github.com/laravel/quickstart-basic quickstart
-cd quickstart
-composer install
-php artisan migrate
-php artisan serve
+# Configure Nginx
+
+wget 
+sudo systemctl start nginx
+sudo systemctl enable nginx
