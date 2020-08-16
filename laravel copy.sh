@@ -12,7 +12,7 @@ sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring p
 #EFS file system
 cd /home/centos
 mkdir laravel
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-d0804c52.efs.us-east-1.amazonaws.com:/ laravel
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-739458f1.efs.us-east-1.amazonaws.com:/ laravel
 sudo chown -R centos ./laravel/*
 
 # Configure Nginx
@@ -25,15 +25,23 @@ sudo systemctl enable php-fpm
 
 # composer install
 if [ -d /home/centos/laravel/quickstart ]; then
-cd /laravel/quickstart
+cd laravel
+wget https://getcomposer.org/installer
+sudo mv installer compose-setup.php
+sudo php composer-setup.php
+sudo mv composer.phar /usr/local/bin/composer
+sudo ln -s /usr/local/bin/composer /usr/bin/composer
+cd quickstart
+sudo composer install
 sudo ln -s /home/centos/laravel/quickstart /usr/share/nginx/html/quickstart
-sudo php composer.phar install
 else
 cd /usr/share/nginx/html
-sudo curl -sS https://getcomposer.org/installer | php
-sudo php composer.phar install
-sudo php composer.phar create-project --prefer-dist laravel/laravel quickstart
-sudo cp composer.phar ./quickstart
+wget https://getcomposer.org/installer
+sudo mv installer composer-setup.php
+sudo php composer-setup.php
+sudo mv composer.phar /usr/local/bin/composer
+sudo ln -s /usr/local/bin/composer /usr/bin/composer
+sudo composer create-project --prefer-dist laravel/laravel quickstart
 sudo ln -s /usr/share/nginx/html/quickstart /home/centos/laravel/quickstart
 fi
 
