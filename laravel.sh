@@ -1,78 +1,102 @@
 #!/bin/bash
+su -u centos bash <<<EOF
+    # Laravel Intallation process
 
-# Laravel Intallation process
+    #EFS file system
+    cd /home/centos
+    if [ -d ./laravel ]; then
+    echo "Already exist"
+    else
+    mkdir laravel
+    sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel
+    sudo chown -R centos ./laravel/*
+    fi
 
-#EFS file system
-cd /home/centos
-if [-d ./laravel]
-then
-echo "Already exist"
-else
-su centos -c 'mkdir laravel'
-su centos -c 'sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel'
-fi
+    # Install PHP and Nginx
 
-# Install PHP and Nginx
+    sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+    sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli mariadb-server php71w-mysql
+    
+    # Install composer
+    curl -sS https://getcomposer.org/installer | php
+    sudo mv composer.phar /usr/local/bin/composer
+    sudo chmod +x /usr/local/bin/composer
+    sudo ln -s /usr/local/bin/composer /usr/bin/composer
 
-yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli mariadb-server php71w-mysql
+    # Configure Mysql
+    sudo systemctl start mariadb
+    sudo systemctl enable mariadb
 
-# Install composer
-su centos -c 'php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"'
-su centos -c "sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer"
-su centos -c "sudo chmod +x /usr/local/bin/composer"
-su centos -c "sudo ln -s /usr/local/bin/composer /usr/bin/composer"
+    # Configure Nginx
 
-# Configure Mysql
-systemctl start mariadb
-systemctl enable mariadb
+    sudo systemctl start nginx
+    sudo systemctl enable nginx
 
-# Configure Nginx
+    sudo systemctl start php-fpm
+    sudo systemctl enable php-fpm
 
-systemctl start nginx
-systemctl enable nginx
+    # composer install
+    cd laravel
+    if [ -d ./quickstart ]; then
+    echo "Already exist"
+    cd quickstart
+    sudo composer install
 
-systemctl start php-fpm
-systemctl enable php-fpm
+    # SeLinux ownership fix error
+    sudo sestatus
+    sudo setenforce 0
+    sudo chmod -R 775 /home/centos/laravel/quickstart/
+    sudo chown -R apache.apache /home/centos/laravel/quickstart/
+    sudo chmod -R 777 /home/centos/laravel/quickstart/storage/
+    sudo chown -R apache.apache /home/centos/laravel/quickstart/bootstrap/cache
 
-# composer install
-cd laravel
-#composer create-project --prefer-dist laravel/laravel quickstart
-su centos -c 'git clone https://github.com/laravel/quickstart-basic quickstart'
-cd ..
-su centos -c 'sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf'
-su centos -c 'sudo mv nginx.conf /etc/nginx/nginx.conf'
+    sudo semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/bootstrap/cache(/.*)?'
+    sudo semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/storage(/.*)?'
 
-systemctl restart nginx
+    sudo restorecon -Rv '/home/centos/laravel/quickstart'
 
-# SeLinux ownership fix error
-sestatus
-setenforce 0
-chmod -R 775 /home/centos/laravel/quickstart/*
-chown -R apache.apache /home/centos/laravel/quickstart/
-chmod -R 777 /home/centos/laravel/quickstart/storage/*
-chown -R apache.apache /home/centos/laravel/quickstart/bootstrap/cache
+    sudo php artisan key:generate
+    sudo php artisan make:auth
+    else
+ #   git clone https://github.com/laravel/quickstart-basic quickstart
+ #   cd quickstart
+ #   sudo composer install
+    sudo composer create-project --prefer-dist laravel/laravel quickstart
 
-semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/bootstrap/cache(/.*)?'
-semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/storage(/.*)?'
+    # SeLinux ownership fix error
+    sudo sestatus
+    sudo setenforce 0
+    sudo chmod -R 775 /home/centos/laravel/quickstart/
+    sudo chown -R apache.apache /home/centos/laravel/quickstart/
+    sudo chmod -R 777 /home/centos/laravel/quickstart/storage/
+    sudo chown -R apache.apache /home/centos/laravel/quickstart/bootstrap/cache
 
-restorecon -Rv '/home/centos/laravel/quickstart'
+    sudo semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/bootstrap/cache(/.*)?'
+    sudo semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/storage(/.*)?'
 
-# Configure Laravel Installation
-#wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
-#mv .env /usr/share/nginx/html/quickstart/.env
-cd /laravel/quickstart/
-su centos -c 'sudo composer install'
-su centos -c 'sudo php artisan key:generate'
+    sudo restorecon -Rv '/home/centos/laravel/quickstart'
 
-# Database migration
-su centos -c 'mysql -uroot -e "create database laravel;"'
-su centos -c 'sudo php artisan make:auth'
-su centos -c 'sudo php artisan session:table'
-su centos -c 'sudo php artisan migrate'
+    sudo php artisan key:generate
+    sudo php artisan make:auth
+    fi
 
-# Restart services
-systemctl restart nginx
-systemctl restart php-fpm
+    cd ..
+    wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
+    sudo mv nginx.conf /etc/nginx/nginx.conf
+
+    sudo systemctl restart nginx
+    # Configure Laravel Installation
+    #wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
+    #mv .env /usr/share/nginx/html/quickstart/.env
+
+    # Database migration
+    mysql -uroot -e "create database laravel;"
+    sudo php artisan session:table
+    sudo php artisan migrate
+
+    # Restart services
+    sudo systemctl restart nginx
+    sudo systemctl restart php-fpm
+EOF
