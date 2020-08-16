@@ -2,6 +2,16 @@
 
 # Laravel Intallation process
 
+#EFS file system
+mkdir /home/centos/laravel
+mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel
+
+# Install composer
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+chmod +x /usr/local/bin/composer
+ln -s /usr/local/bin/composer /usr/bin/composer
+
 # Install PHP and Nginx
 
 rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
@@ -17,15 +27,11 @@ systemctl enable nginx
 systemctl start php-fpm
 systemctl enable php-fpm
 
-# Install composer
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-chmod +x /usr/local/bin/composer
-ln -s /usr/local/bin/composer /usr/bin/composer
-
 # composer install
-cd /usr/share/nginx/html
-git clone https://github.com/laravel/quickstart-basic quickstart
+cd /home/centos/laravel
+composer create-project --prefer-dist laravel/laravel quickstart
+#git clone https://github.com/laravel/quickstart-basic quickstart
+#composer install
 wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
 mv nginx.conf /etc/nginx/nginx.conf
 
@@ -34,30 +40,31 @@ systemctl restart nginx
 # SeLinux ownership fix error
 sestatus
 setenforce 0
-chmod -R 775 /usr/share/nginx/html/quickstart/*
-chown -R apache.apache /usr/share/nginx/html/quickstart/
-chmod -R 777 /usr/share/nginx/html/quickstart/storage/*
-chown -R apache.apache /usr/share/nginx/html/quickstart/bootstrap/cache
+chmod -R 775 /home/centos/laravel/quickstart/*
+chown -R apache.apache /home/centos/laravel/quickstart/
+chmod -R 777 /home/centos/laravel/quickstart/storage/*
+chown -R apache.apache /home/centos/laravel/quickstart/bootstrap/cache
 
-semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/quickstart/bootstrap/cache(/.*)?'
-semanage fcontext -a -t httpd_sys_rw_content_t '/usr/share/nginx/html/quickstart/storage(/.*)?'
+semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/bootstrap/cache(/.*)?'
+semanage fcontext -a -t httpd_sys_rw_content_t '/home/centos/laravel/quickstart/storage(/.*)?'
 
-restorecon -Rv '/usr/share/nginx/html/quickstart'
+restorecon -Rv '/home/centos/laravel/quickstart'
 
 # Configure Laravel Installation
-wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
-mv .env /usr/share/nginx/html/quickstart/.env
+#wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
+#mv .env /usr/share/nginx/html/quickstart/.env
 cd quickstart/
-composer install
+#composer install
 php artisan key:generate
 
 # Database migration
 yum -y install mariadb-server php71w-mysql
-sudo systemctl start mariadb
-sudo systemctl enable mariadb
-#php artisan make:auth
-#php artisan session:table
-#php artisan migrate
+systemctl start mariadb
+systemctl enable mariadb
+mysql -uroot -e "create database laravel;"
+php artisan make:auth
+php artisan session:table
+php artisan migrate
 
 # Restart services
 systemctl restart nginx
