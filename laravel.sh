@@ -7,10 +7,10 @@ mkdir /home/centos/laravel
 mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel
 
 # Install composer
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-chmod +x /usr/local/bin/composer
-ln -s /usr/local/bin/composer /usr/bin/composer
+su centos -c "curl -sS https://getcomposer.org/installer | php"
+su centos -c "mv composer.phar /usr/local/bin/composer"
+su centos -c "chmod +x /usr/local/bin/composer"
+su centos -c "ln -s /usr/local/bin/composer /usr/bin/composer"
 
 # Install PHP and Nginx
 
@@ -32,8 +32,8 @@ cd /home/centos/laravel
 composer create-project --prefer-dist laravel/laravel quickstart
 #git clone https://github.com/laravel/quickstart-basic quickstart
 #composer install
-wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
-mv nginx.conf /etc/nginx/nginx.conf
+su centos -c 'wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf'
+su centos -c 'sudo mv nginx.conf /etc/nginx/nginx.conf'
 
 systemctl restart nginx
 
@@ -61,7 +61,7 @@ php artisan key:generate
 yum -y install mariadb-server php71w-mysql
 systemctl start mariadb
 systemctl enable mariadb
-mysql -uroot -e "create database laravel;"
+su centos -c 'mysql -uroot -e "create laravel;"'
 php artisan make:auth
 php artisan session:table
 php artisan migrate
