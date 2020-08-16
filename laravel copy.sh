@@ -7,22 +7,14 @@
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
-sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli
+sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli mariadb-server php71w-mysql
 
 #EFS file system
 cd /home/centos
-if [ -d ./laravel ]; then
-echo "Already exist"
-sudo chown -R centos ./laravel/*
-sudo rm -rf ./laravel/*
-else
 mkdir laravel
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-d0804c52.efs.us-east-1.amazonaws.com:/ laravel
 sudo chown -R centos ./laravel/*
-sudo rm -rf ./laravel/*
-fi
 
-cd
 # Configure Nginx
 
 sudo systemctl start nginx
@@ -31,16 +23,20 @@ sudo systemctl enable nginx
 sudo systemctl start php-fpm
 sudo systemctl enable php-fpm
 
-# Install composer
-sudo curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-sudo chmod +x /usr/local/bin/composer
-sudo ln -s /usr/local/bin/composer /usr/bin/composer
-
 # composer install
+if [ -d /home/centos/laravel/quickstart ]; then
+cd /laravel/quickstart
+sudo ln -s /home/centos/laravel/quickstart /usr/share/nginx/html/quickstart
+sudo php composer.phar install
+else
 cd /usr/share/nginx/html
-sudo composer create-project --prefer-dist laravel/laravel quickstart
+sudo curl -sS https://getcomposer.org/installer | php
+sudo php composer.phar install
+sudo php composer.phar create-project --prefer-dist laravel/laravel quickstart
+sudo cp composer.phar ./quickstart
 sudo ln -s /usr/share/nginx/html/quickstart /home/centos/laravel/quickstart
+fi
+
 sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/nginx.conf
 sudo mv nginx.conf /etc/nginx/nginx.conf
 
@@ -68,7 +64,10 @@ cd quickstart/
 sudo php artisan key:generate
 
 # Database migration
-#sudo php artisan migrate
+#php artisan make:migration create_users_table
+#php artisan make:migration create_users_table --create=users
+#php artisan make:migration add_votes_to_users_table --table=users
+#php artisan migrate --force
 
 # Restart services
 sudo systemctl restart nginx
