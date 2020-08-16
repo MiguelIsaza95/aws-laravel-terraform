@@ -19,12 +19,6 @@ su -u centos bash <<<EOF
     sudo rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 
     sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring php71w-xml php71w-common php71w-cli mariadb-server php71w-mysql
-    
-    # Install composer
-    curl -sS https://getcomposer.org/installer | php
-    sudo mv composer.phar /usr/local/bin/composer
-    sudo chmod +x /usr/local/bin/composer
-    sudo ln -s /usr/local/bin/composer /usr/bin/composer
 
     # Configure Mysql
     sudo systemctl start mariadb
@@ -39,11 +33,12 @@ su -u centos bash <<<EOF
     sudo systemctl enable php-fpm
 
     # composer install
-    cd laravel
     if [ -d ./quickstart ]; then
     echo "Already exist"
     cd quickstart
-    sudo composer install
+    # Install composer
+    curl -sS https://getcomposer.org/installer | php
+    sudo php composer.phar install
 
     # SeLinux ownership fix error
     sudo sestatus
@@ -64,7 +59,10 @@ su -u centos bash <<<EOF
  #   git clone https://github.com/laravel/quickstart-basic quickstart
  #   cd quickstart
  #   sudo composer install
-    sudo composer create-project --prefer-dist laravel/laravel quickstart
+     # Install composer
+    curl -sS https://getcomposer.org/installer | php
+    sudo php composer.phar install
+    sudo php composer.phar create-project --prefer-dist laravel/laravel quickstart
 
     # SeLinux ownership fix error
     sudo sestatus
