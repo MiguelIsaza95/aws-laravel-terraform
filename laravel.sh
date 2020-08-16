@@ -6,6 +6,7 @@ su -u centos bash <<<EOF
     cd /home/centos
     if [ -d ./laravel ]; then
     echo "Already exist"
+    sudo chown -R centos ./laravel/*
     else
     mkdir laravel
     sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-3dd914bf.efs.us-east-1.amazonaws.com:/ laravel
