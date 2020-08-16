@@ -81,6 +81,12 @@ resource "aws_security_group" "general_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.bastion_sg.id]
   }
+  ingress {
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = ["10.32.0.0/16"]
+  }
   egress {
     from_port   = 80
     to_port     = 80
@@ -92,6 +98,12 @@ resource "aws_security_group" "general_sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = ["10.32.0.0/16"]
   }
   description = "Allow bastion and nat traffic from/to instances"
 }

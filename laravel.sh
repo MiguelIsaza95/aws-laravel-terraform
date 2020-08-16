@@ -12,7 +12,8 @@ sudo yum -y install wget git vim nginx1w php71w-fpm php71w-pdo php71w-mbstring p
 #EFS file system
 cd /home/centos
 mkdir laravel
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-739458f1.efs.us-east-1.amazonaws.com:/ laravel
+efs_dns="${efs_dns}"
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport $efs_dns:/ laravel
 sudo chown -R centos ./laravel/*
 
 # Configure Nginx
@@ -72,6 +73,7 @@ cd quickstart/
 sudo php artisan key:generate
 
 # Database migration
+#php artisan make:auth
 #php artisan make:migration create_users_table
 #php artisan make:migration create_users_table --create=users
 #php artisan make:migration add_votes_to_users_table --table=users

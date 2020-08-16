@@ -1,5 +1,5 @@
 resource "aws_route53_zone" "private" {
-  name = "laravel.tk"
+  name = "laravelaws.org"
 
   vpc {
     vpc_id = aws_vpc.test.id
