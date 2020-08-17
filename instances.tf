@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 0)
-  user_data                   = filebase64("${path.module}/bastion.sh")
+  user_data                   = data.template_file.init.rendered
   tags = {
     Name        = "bastion"
     Environment = "Test"
