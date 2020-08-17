@@ -30,9 +30,8 @@ sudo mv .env /usr/share/nginx/html/quickstart/.env
 cd quickstart
 sudo composer install
 sudo php artisan key:generate
+
 # Database migration
-#sudo php artisan make:auth
-#sudo php artisan make:migration create_tasks_table --create=tasks
 sudo php artisan migrate --force
 
 # SeLinux ownership fix error
