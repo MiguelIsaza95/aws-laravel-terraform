@@ -1,11 +1,12 @@
 resource "aws_instance" "bastion" {
   monitoring                  = true
-  ami                         = data.aws_ami.linux_latest.id
+  ami                         = data.aws_ami.amz_latest.id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 0)
+  user_data                   = data.template_file.init.rendered
   tags = {
     Name        = "bastion"
     Environment = "Test"
@@ -80,7 +81,7 @@ resource "aws_db_instance" "mysql_server" {
 
 resource "aws_db_snapshot" "db_snapshot" {
   db_instance_identifier = aws_db_instance.mysql_server.id
-  db_snapshot_identifier = "moviesnapshot1234"
+  db_snapshot_identifier = "snapshot1234"
 }
 
 resource "aws_db_parameter_group" "default" {

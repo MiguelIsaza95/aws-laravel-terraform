@@ -1,5 +1,5 @@
 resource "aws_autoscaling_group" "laravel" {
-  depends_on                = [aws_db_instance.mysql_server]
+  depends_on                = [aws_route53_record.db]
   name_prefix               = "laravel-autoscaling-group"
   max_size                  = 5
   min_size                  = 3
