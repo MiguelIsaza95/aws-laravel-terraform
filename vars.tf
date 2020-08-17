@@ -1,9 +1,6 @@
 # VPC configuration vars
 variable "region" {}
 variable "vpc_name" {}
-variable "ami" {
-  type = string
-}
 variable "vpc_tags" {}
 variable "vpc_address" {}
 variable "public_subnet_address" {

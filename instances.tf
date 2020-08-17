@@ -39,7 +39,7 @@ resource "aws_launch_template" "laravel" {
     enabled = true
   }
   name_prefix            = "laravel"
-  image_id               = var.ami
+  image_id               = data.aws_ami.centos_latest.id
   instance_type          = var.laravel_instance_type
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.laravel_sg.id, aws_security_group.general_sg.id]

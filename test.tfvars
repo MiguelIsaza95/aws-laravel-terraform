@@ -14,7 +14,6 @@ backend_subnet_address  = ["10.32.80.0/20", "10.32.96.0/20"]
 backend_subnet_zone     = ["us-east-1c", "us-east-1d"]
 
 # EC2 instances configuration vars
-ami                   = "ami-0affd4508a5d2481b"
 key_name              = "linux_key"
 instance_type         = "t2.micro"
 laravel_instance_type = "t2.medium"

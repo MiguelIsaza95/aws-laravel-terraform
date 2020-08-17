@@ -29,8 +29,7 @@ sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/
 sudo mv .env /usr/share/nginx/html/quickstart/.env
 cd quickstart
 sudo composer install
-sudo php artisan key:generate
-
+#sudo php artisan key:generate
 # Database migration
 sudo php artisan migrate --force
 
