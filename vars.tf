@@ -57,6 +57,7 @@ variable "aws_key_pair" {}
 variable "db_instance_type" {}
 variable "db_username" {}
 variable "db_password" {}
+variable "db_initial_db_name" {}
 variable "engine" {}
 variable "engine_version" {}
 
