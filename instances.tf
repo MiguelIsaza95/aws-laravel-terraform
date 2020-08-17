@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 0)
-  user_data                   = data.template_file.init.rendered
+  user_data                   = filebase64("${path.module}/bastion.sh")
   tags = {
     Name        = "bastion"
     Environment = "Test"
@@ -62,6 +62,7 @@ resource "aws_db_instance" "mysql_server" {
   identifier            = "laravelaws"
   username              = var.db_username
   password              = var.db_password
+  name                  = var.db_initial_db_name
   instance_class        = var.db_instance_type
   allocated_storage     = 20
   max_allocated_storage = 100
