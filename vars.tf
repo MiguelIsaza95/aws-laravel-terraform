@@ -49,6 +49,7 @@ variable "enabled_metrics" {
 # EC2 instances configuration vars
 variable "key_name" {}
 variable "instance_type" {}
+variable "laravel_instance_type" {}
 variable "aws_key_pair" {}
 
 # DB configuraiton vars

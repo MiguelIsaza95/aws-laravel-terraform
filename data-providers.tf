@@ -15,12 +15,3 @@ data "aws_ami" "amz_latest" {
     values = ["amzn2-ami-hvm-*"]
   }
 }
-
-data "template_file" "init" {
-  template = file("${path.module}/bastion.tpl")
-  vars = {
-    user   = var.db_username
-    passwd = var.db_password
-    host   = aws_db_instance.mysql_server.address
-  }
-}

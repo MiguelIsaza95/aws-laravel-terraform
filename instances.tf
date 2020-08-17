@@ -6,7 +6,7 @@ resource "aws_instance" "bastion" {
   security_groups             = [aws_security_group.bastion_sg.id]
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 0)
-  user_data                   = data.template_file.init.rendered
+  user_data                   = filebase64("${path.module}/bastion.sh")
   tags = {
     Name        = "bastion"
     Environment = "Test"
@@ -40,7 +40,7 @@ resource "aws_launch_template" "laravel" {
   }
   name_prefix            = "laravel"
   image_id               = var.ami
-  instance_type          = var.instance_type
+  instance_type          = var.laravel_instance_type
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.laravel_sg.id, aws_security_group.general_sg.id]
   user_data              = filebase64("${path.module}/laravel.sh")
