@@ -24,7 +24,7 @@ sudo mv installer composer-setup.php
 sudo php composer-setup.php
 sudo mv composer.phar /usr/local/bin/composer
 sudo ln -s /usr/local/bin/composer /usr/bin/composer
-sudo git clone https://github.com/laravel/quickstart-basic quickstart
+sudo git clone https://github.com/MiguelIsaza95/quickstart-basic.git quickstart
 cd quickstart
 sudo composer install
 #sudo php artisan key:generate
