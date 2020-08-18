@@ -7,6 +7,9 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 0)
   user_data                   = filebase64("${path.module}/bastion.sh")
+  root_block_device {
+    volume_size = 10
+  }
   tags = {
     Name        = "bastion"
     Environment = "Test"
@@ -24,6 +27,9 @@ resource "aws_instance" "nat" {
   security_groups             = [aws_security_group.nat_sg.id]
   associate_public_ip_address = true
   subnet_id                   = element(aws_subnet.dmz_public.*.id, 1)
+  root_block_device {
+    volume_size = 10
+  }  
   tags = {
     Name        = "nat"
     Environment = "Test"
@@ -44,6 +50,14 @@ resource "aws_launch_template" "laravel" {
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.laravel_sg.id, aws_security_group.general_sg.id]
   user_data              = filebase64("${path.module}/laravel.sh")
+  block_device_mappings {
+    device_name = "/dev/sda1"
+
+    ebs {
+      volume_size = 20
+      delete_on_termination = true
+    }
+  }
   tag_specifications {
     resource_type = "instance"
     tags = {
