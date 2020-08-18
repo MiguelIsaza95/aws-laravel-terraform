@@ -25,13 +25,11 @@ sudo php composer-setup.php
 sudo mv composer.phar /usr/local/bin/composer
 sudo ln -s /usr/local/bin/composer /usr/bin/composer
 sudo git clone https://github.com/laravel/quickstart-basic quickstart
-sudo wget https://raw.githubusercontent.com/MiguelIsaza95/aws-laravel-terraform/master/config_file/.env
-sudo mv .env /usr/share/nginx/html/quickstart/.env
 cd quickstart
 sudo composer install
 #sudo php artisan key:generate
 # Database migration
-sudo php artisan migrate --force
+sudo php artisan migrate
 
 # SeLinux ownership fix error
 sudo sestatus
