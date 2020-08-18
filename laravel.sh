@@ -27,7 +27,7 @@ sudo ln -s /usr/local/bin/composer /usr/bin/composer
 sudo git clone https://github.com/MiguelIsaza95/quickstart-basic.git quickstart
 cd quickstart
 sudo composer install
-#sudo php artisan key:generate
+
 # Database migration
 sudo php artisan migrate
 
